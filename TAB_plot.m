@@ -64,7 +64,7 @@ for i = 1:n_trials
     end
     
     o(:,i) = MDP(i).o(:,end); % observation
-    u(:,i) = MDP(i).R(:,end); % chosen action
+    u(:,i) = MDP(i).u(:,end); % chosen action
     
 end
 
@@ -81,7 +81,7 @@ t     = 1:n_trials;
 subplot(2,1,1)
 
 imagesc([1 - choice_prob]); colormap(cols) , hold on
-chosen_action = [2 3 4]*u; plot([chosen_action],'.','MarkerSize',MarkerSize,'Color',col{1})
+chosen_action = u; plot([chosen_action],'.','MarkerSize',MarkerSize,'Color',col{1})
 
 for i = 1:max(o(1,:))
     j = find(o(1,:) == i);
