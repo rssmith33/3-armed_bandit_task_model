@@ -68,17 +68,11 @@ for i = 1:length(DCM.field)
         if strcmp(field,'alpha')
             pE.(field) = log(4);               % in log-space (to keep positive)
             pC{i,i}    = prior_variance;
-        elseif strcmp(field,'beta')
-            pE.(field) = log(1);                % in log-space (to keep positive)
-            pC{i,i}    = prior_variance;
-        elseif strcmp(field,'cs')
-            pE.(field) = log(2^0);              % in log-space (to keep positive)
-            pC{i,i}    = prior_variance;
         elseif strcmp(field,'prior_a')
             pE.(field) = log(1/4);              % in log-space (to keep positive)
             pC{i,i}    = prior_variance;
         elseif strcmp(field,'cr')
-            pE.(field) = log(2^2);              % in log-space (to keep positive)
+            pE.(field) = log(4);              % in log-space (to keep positive)
             pC{i,i}    = prior_variance;
         elseif strcmp(field,'eta_win')
             pE.(field) = log(0.5/(1-0.5));      % in logit-space - bounded between 0 and 1!
@@ -125,18 +119,12 @@ function L = spm_mdp_L(P,M,U,Y)
 % Y    - observed repsonses
 %__________________________________________________________________________
 
-if ~isstruct(P); P = spm_unvec(P,M.pE); end
-
 % multiply parameters in MDP
 %--------------------------------------------------------------------------
 mdp   = M.mdp;
 field = fieldnames(M.pE);
 for i = 1:length(field)
     if strcmp(field{i},'alpha')
-        mdp.(field{i}) = exp(P.(field{i}));
-    elseif strcmp(field{i},'beta')
-        mdp.(field{i}) = exp(P.(field{i}));
-    elseif strcmp(field{i},'cs')
         mdp.(field{i}) = exp(P.(field{i}));
     elseif strcmp(field{i},'prior_a')
         mdp.(field{i}) = exp(P.(field{i}));
@@ -149,19 +137,6 @@ for i = 1:length(field)
     else
         mdp.(field{i}) = exp(P.(field{i}));
     end
-end
-
-
-% discern whether learning is enabled - and identify unique trials if not
-%--------------------------------------------------------------------------
-if any(ismember(fieldnames(mdp),{'a','b','d','c','d','e'}))
-    j = 1:numel(U);
-    k = 1:numel(U);
-else
-    % find unique trials (up until the last outcome)
-    %----------------------------------------------------------------------
-    u       = spm_cat(U');
-    [i,j,k] = unique(u(:,1:(end - 1)),'rows');
 end
 
 U_block = U{:};
